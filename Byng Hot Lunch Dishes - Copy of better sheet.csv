@@ -1,0 +1,59 @@
+dish name,restaurant name,day availability,regular price,large price (if applicable),protein type,base type
+Chicken Nugget Omurice,NAME1,Tues,$10.00,,C,Rice
+Teriyaki Chicken Rice Set,NAME1,Tues,$10.00,,C,Rice
+Chicken Nuggets with Tomato Fried Rice,NAME1,Tues,$10.00,,C,Rice
+Korean Sauce with Pork,NAME1,Tues,$10.00,,P,Rice
+Chicken with Salmon Egg in Creamy Sauce,NAME1,Tues,$10.00,,C,Rice
+Chicken with Sweet and Sour Sauce,NAME1,Tues,$10.00,,C,Rice
+Stew Potato with Pork,NAME1,Tues,$10.00,,P,Rice
+Teriyaki Chicken,NAME1,Tues,$10.00,,C,Rice
+Chicken with Black Pepper Sauce,NAME1,Tues,$10.00,,C,Rice
+Braised Tomato Beef,NAME1,Tues,$10.00,,B,Rice
+Beef Noodle Soup,NAME1,All,$10.00,,B,Soup noodle
+Wonton Noodle Soup,NAME1,All,$10.00,,O,Soup noodle
+Fish Ball (incl. pork) Noodle Soup,NAME1,All,$10.00,,O,Soup noodle
+Stir-fried Noodle with Salty Peppery Chicken,NAME1,All,$10.00,,C,Rice
+Stir-fried Noodle with Deep Fried Pork Chop,NAME1,All,$10.00,,P,Rice
+Beef Steak with Black Pepper Sauce,NAME1,All,$10.00,,B,Rice
+Black Pepper Duck Breast,NAME1,All,$10.00,,O,Rice
+Railway Bento (chicken + pork),NAME1,All,$10.00,,CP,Rice
+Pork Chop Bento,NAME1,All,$10.00,,P,Rice
+Salty Peppery Chicken Bento,NAME1,All,$10.00,,C,Rice
+Fried Rice Bento with Pork Chop,NAME1,All,$10.00,,P,Rice
+Three Spice Chicken Bento,NAME1,All,$10.00,,C,Rice
+Cold Noodle with Diced Chicken,NAME1,All,$10.00,,C,Dry noodle
+Braised Pork Bento,NAME1,All,$10.00,,P,Rice
+Chicken/Beef Yakisoba,NAME1,Wed,$10.00,,C/B,Dry noodle
+Sweet and Sour Chicken Box,NAME1,Wed,$10.00,,C,Rice
+Beef Bento Box,NAME1,Wed,$10.00,,B,Rice
+Chicken Bento Box,NAME1,Wed,$10.00,,C,Rice
+Sweet and Sour Chicken Bento Box,NAME1,Wed,$10.00,,C,Rice
+Cali + Yam Avocado + Brownie,NAME1,Wed,$10.00,,,Sushi
+Dynamite + Avocado Roll + Coke,NAME1,Wed,$10.00,,,Sushi
+Beef/Chicken BBQ Noodle ,NAME1,Wed,$10.00,,B/C,Dry noodle
+Chicken Dumplings Combo,NAME1,Wed,$10.00,,C,Handheld/O
+Sushi Wraps,NAME1,Wed,$10.00,,B/C,Handheld/O
+Chachu Pork Bowl,NAME1,Wed,$10.00,,P,Rice
+Chicken/Beef Teriyaki with Cali Roll,NAME1,Wed,$10.00,,B/C,Sushi
+Chicken Teriyaki Bowl,NAME1,Wed,$10.00,,C,Rice
+Beef Teriyaki Bowl,NAME1,Wed,$10.00,,B,Rice
+Pork Loin Set,NAME1,Thurs,$10.00,,P,Rice
+Pork Tenderloin Set,NAME1,Thurs,$10.00,,P,Rice
+Chicken Set,NAME1,Thurs,$10.00,,C,Rice
+Shrimp Set,NAME1,Thurs,$10.00,,O,Rice
+Pork Loin Curry Set,NAME1,Thurs,$10.00,,P,Rice
+Pork Tenderloin Curry Set,NAME1,Thurs,$10.00,,P,Rice
+Chicken Curry Set,NAME1,Thurs,$10.00,,C,Rice
+Shrimp Curry Set,NAME1,Thurs,$10.00,,S,Rice
+Chicken with Springroll/Egg/Tofu/Wonton on Rice/Vermicelli,NAME1,"Thurs, Fri",$10.00,,C,M
+Pork with Springroll/Egg/Tofu/Wonton on Rice/Vermicelli,NAME1,"Thurs, Fri",$10.00,,P,M
+Chicken Bites with Springroll/Egg/Tofu/Wonton on Rice/Vermicelli,NAME1,"Thurs, Fri",$10.00,,C,M
+Banh Mi (Lemongrass Chicken or Pork),NAME1,"Thurs, Fri",$10.00,,C/P,Handheld/O
+Banh Mi (Chicken/Pork) with Springroll,NAME1,"Thurs, Fri",$10.00,,C/P,Handheld/O
+Banh Mi (Chicken/Pork) with Salad Roll,NAME1,"Thurs, Fri",$10.00,,C/P,Handheld/O
+Banh Mi with Tofu,NAME1,"Thurs, Fri",$10.00,,O,Handheld/O
+Chicken Bao with Fries/Salad,NAME1,All,$10.00,,C,Handheld/O
+Beef Bowl with Egg and Fries/Salad,NAME1,All,$10.00,,B,Rice
+Chicken Teriyaki Bowl with Fries/Salad,NAME1,All,$10.00,,C,Rice
+Chicken Wings on Rice with Fries/Salad,NAME1,All,$10.00,,C,Rice
+Egg and Sausage Bao with Fries/Salad,NAME1,All,$10.00,,O,Handheld/O

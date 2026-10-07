@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>School lunch planner</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: #fff;
+        color: #000;
+      }
+
+      header,
+      .setup {
+        border-bottom: 1px solid #000;
+        padding: 20px 32px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      h2 {
+        font-size: 1.125rem;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: minmax(16rem, 1fr) 16rem auto;
+        align-items: end;
+        gap: 16px;
+        max-width: 1000px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      input,
+      select,
+      button {
+        min-height: 44px;
+        border: 1px solid #000;
+        border-radius: 0;
+        background: #fff;
+        color: #000;
+        font: inherit;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 8px 10px;
+      }
+
+      button {
+        padding: 8px 14px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      button:hover,
+      button:focus-visible {
+        background: #000;
+        color: #fff;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 2px solid #000;
+        outline-offset: 2px;
+      }
+
+      button.primary {
+        background: #000;
+        color: #fff;
+      }
+
+      button.primary:hover,
+      button.primary:focus-visible {
+        background: #fff;
+        color: #000;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 24px;
+        margin-top: 12px;
+        font-size: 0.875rem;
+      }
+
+      .error {
+        font-weight: 700;
+      }
+
+      .calendar-section {
+        padding: 24px 32px 40px;
+      }
+
+      .calendar-title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .calendar-title p {
+        font-size: 0.875rem;
+      }
+
+      .calendar {
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+      }
+
+      .weekday-headings,
+      .week {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .weekday-heading,
+      .day {
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        padding: 12px;
+      }
+
+      .weekday-heading {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .day {
+        min-height: 256px;
+      }
+
+      .day.empty {
+        background: #fff;
+      }
+
+      .day-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      .mobile-weekday {
+        display: none;
+        font-size: 0.875rem;
+        font-weight: 400;
+      }
+
+      .meal,
+      .waiting,
+      .closed {
+        border-top: 1px solid #000;
+        padding-top: 12px;
+      }
+
+      .meal {
+        display: flex;
+        min-height: 175px;
+        flex-direction: column;
+      }
+
+      .meal h3,
+      .closed strong {
+        font-size: 1rem;
+        line-height: 1.35;
+      }
+
+      .meta,
+      .waiting,
+      .closed p {
+        margin-top: 4px;
+        font-size: 0.875rem;
+        line-height: 1.4;
+      }
+
+      .price {
+        margin-top: 12px;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 20px;
+      }
+
+      .actions button {
+        min-height: 36px;
+        padding: 6px 8px;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 900px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        header,
+        .setup,
+        .calendar-section {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .weekday-headings {
+          display: none;
+        }
+
+        .week {
+          display: block;
+        }
+
+        .day {
+          min-height: 144px;
+        }
+
+        .day.empty {
+          display: none;
+        }
+
+        .mobile-weekday {
+          display: inline;
+        }
+
+        .meal {
+          min-height: 0;
+        }
+
+        .actions {
+          margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>School lunch planner</h1>
+    </header>
+
+    <section class="setup" aria-label="Planner setup">
+      <div class="controls">
+        <label>
+          Menu CSV
+          <input id="csv-input" type="file" accept=".csv,text/csv" />
+        </label>
+
+        <label>
+          Month
+          <select id="month-select"></select>
+        </label>
+
+        <button id="generate-button" class="primary" type="button" disabled>Generate menu</button>
+      </div>
+
+      <div class="status-row">
+        <p id="status" role="status" aria-live="polite">Upload a CSV to begin.</p>
+        <p>Manual no-school days</p>
+        <p id="file-name"></p>
+      </div>
+    </section>
+
+    <section class="calendar-section" aria-label="Monthly lunch calendar">
+      <div class="calendar-title">
+        <h2 id="calendar-month"></h2>
+        <p>Monday–Friday</p>
+      </div>
+      <div id="calendar" class="calendar"></div>
+    </section>
+
+    <script>
+      (() => {
+        'use strict';
+
+        const REQUIRED_HEADERS = [
+          'dish name',
+          'restaurant name',
+          'day availability',
+          'regular price',
+          'large price (if applicable)',
+          'protein type',
+          'base type',
+        ];
+        const DAY_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const DAY_ALIASES = {
+          mon: 1,
+          monday: 1,
+          tue: 2,
+          tues: 2,
+          tuesday: 2,
+          wed: 3,
+          weds: 3,
+          wednesday: 3,
+          thu: 4,
+          thur: 4,
+          thurs: 4,
+          thursday: 4,
+          fri: 5,
+          friday: 5,
+        };
+
+        const state = {
+          dishes: [],
+          plan: [],
+          selectedMonth: '',
+          monthOptions: [],
+        };
+
+        const csvInput = document.getElementById('csv-input');
+        const monthSelect = document.getElementById('month-select');
+        const generateButton = document.getElementById('generate-button');
+        const status = document.getElementById('status');
+        const fileName = document.getElementById('file-name');
+        const calendarMonth = document.getElementById('calendar-month');
+        const calendar = document.getElementById('calendar');
+
+        function localDateKey(date) {
+          return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+            .map((part, index) => (index === 0 ? String(part) : String(part).padStart(2, '0')))
+            .join('-');
+        }
+
+        function monthKey(date) {
+          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function mondayKey(date) {
+          const monday = new Date(date);
+          monday.setDate(date.getDate() - (date.getDay() - 1));
+          return localDateKey(monday);
+        }
+
+        function setStatus(message, isError = false) {
+          status.textContent = message;
+          status.classList.toggle('error', isError);
+          status.setAttribute('role', isError ? 'alert' : 'status');
+        }
+
+        function makeMonthOptions(count = 12) {
+          const start = new Date();
+          start.setDate(1);
+          return Array.from({ length: count }, (_, index) => {
+            const date = new Date(start.getFullYear(), start.getMonth() + index, 1);
+            return {
+              value: monthKey(date),
+              label: new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date),
+            };
+          });
+        }
+
+        function parseCsv(text) {
+          const rows = [];
+          let row = [];
+          let field = '';
+          let quoted = false;
+
+          for (let index = 0; index < text.length; index += 1) {
+            const char = text[index];
+            const next = text[index + 1];
+            if (char === '"') {
+              if (quoted && next === '"') {
+                field += '"';
+                index += 1;
+              } else {
+                quoted = !quoted;
+              }
+            } else if (char === ',' && !quoted) {
+              row.push(field);
+              field = '';
+            } else if ((char === '\n' || char === '\r') && !quoted) {
+              if (char === '\r' && next === '\n') index += 1;
+              row.push(field);
+              if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+              row = [];
+              field = '';
+            } else {
+              field += char;
+            }
+          }
+
+          if (quoted) throw new Error('The CSV contains an unclosed quoted field.');
+          row.push(field);
+          if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+          return rows;
+        }
+
+        function parseAvailability(raw, rowNumber) {
+          const normalized = raw.trim().toLowerCase();
+          if (normalized === 'all') return [1, 2, 3, 4, 5];
+          const days = normalized
+            .split(',')
+            .map((part) => part.trim().replace(/\.$/, ''))
+            .filter(Boolean)
+            .map((part) => DAY_ALIASES[part])
+            .filter(Boolean);
+          if (!days.length) {
+            throw new Error(`Row ${rowNumber} has an unsupported day availability: “${raw}”.`);
+          }
+          return [...new Set(days)];
+        }
+
+        function parseProteins(raw) {
+          return [...new Set(raw.toUpperCase().match(/[CPBS]/g) || [])];
+        }
+
+        function classifyBase(raw) {
+          const normalized = raw.trim().toLowerCase();
+          if (normalized === 'rice') return 'rice';
+          if (normalized === 'sushi') return 'sushi';
+          return 'other';
+        }
+
+        function parseMenuCsv(text) {
+          const rows = parseCsv(text.replace(/^\uFEFF/, ''));
+          if (!rows.length) throw new Error('The CSV is empty.');
+
+          const headers = rows[0].map((header) => header.trim().toLowerCase());
+          const validHeaders =
+            headers.length === REQUIRED_HEADERS.length &&
+            REQUIRED_HEADERS.every((header, index) => headers[index] === header);
+          if (!validHeaders) {
+            throw new Error(`Expected these columns in order: ${REQUIRED_HEADERS.join(', ')}.`);
+          }
+
+          const dishes = [];
+          for (let index = 1; index < rows.length; index += 1) {
+            const cells = rows[index].map((cell) => cell.trim());
+            if (cells.length !== 7) {
+              throw new Error(`Row ${index + 1} has ${cells.length} columns; expected 7.`);
+            }
+            const [name, restaurant, availabilityRaw, regularPrice, largePrice, proteinRaw, baseRaw] = cells;
+            if (!name || !restaurant || !availabilityRaw || !regularPrice || !baseRaw) {
+              throw new Error(
+                `Row ${index + 1} is missing a dish name, restaurant, availability, regular price, or base type.`,
+              );
+            }
+            dishes.push({
+              id: `${index}-${name}`,
+              name,
+              restaurant,
+              availabilityRaw,
+              availability: parseAvailability(availabilityRaw, index + 1),
+              regularPrice,
+              largePrice,
+              proteinRaw,
+              proteins: parseProteins(proteinRaw),
+              baseRaw,
+              baseCategory: classifyBase(baseRaw),
+            });
+          }
+          if (!dishes.length) throw new Error('The CSV does not contain any usable menu rows.');
+          return dishes;
+        }
+
+        function buildMonthDays(month) {
+          const [year, monthNumber] = month.split('-').map(Number);
+          const lastDay = new Date(year, monthNumber, 0).getDate();
+          const days = [];
+          for (let dayNumber = 1; dayNumber <= lastDay; dayNumber += 1) {
+            const date = new Date(year, monthNumber - 1, dayNumber);
+            if (date.getDay() < 1 || date.getDay() > 5) continue;
+            const key = localDateKey(date);
+            days.push({
+              key,
+              date: key,
+              weekday: date.getDay(),
+              weekKey: mondayKey(date),
+              dish: null,
+              closed: false,
+            });
+          }
+          return days;
+        }
+
+        function overlaps(left, right) {
+          return left.some((protein) => right.includes(protein));
+        }
+
+        function shuffle(values) {
+          const result = [...values];
+          for (let index = result.length - 1; index > 0; index -= 1) {
+            const swap = Math.floor(Math.random() * (index + 1));
+            [result[index], result[swap]] = [result[swap], result[index]];
+          }
+          return result;
+        }
+
+        function emptyWeekState() {
+          return { rice: 0, sushi: 0, other: 0, proteins: {} };
+        }
+
+        function weekTargets(days, phase) {
+          const weekKeys = [...new Set(days.map((day) => day.weekKey))];
+          const fullWeeks = weekKeys.filter((key) => {
+            const weekDays = days.filter((day) => day.weekKey === key);
+            return weekDays.length === 5 && weekDays.every((day) => !day.closed);
+          });
+          const targets = new Map();
+          weekKeys.forEach((key) => {
+            const rank = fullWeeks.indexOf(key);
+            if (rank < 0) {
+              targets.set(key, { full: false, rice: null, sushi: null });
+            } else {
+              const sushi = (rank + phase) % 2 === 0 ? 1 : 0;
+              targets.set(key, { full: true, rice: sushi ? 3 : 4, sushi });
+            }
+          });
+          return targets;
+        }
+
+        function countRemainingActive(days, fromIndex, weekKey) {
+          let count = 0;
+          for (let index = fromIndex + 1; index < days.length; index += 1) {
+            if (days[index].weekKey === weekKey && !days[index].closed) count += 1;
+          }
+          return count;
+        }
+
+        function targetStillPossible(weekState, target, remaining) {
+          if (!target.full) return true;
+          const otherTarget = 5 - target.rice - target.sushi;
+          if (
+            weekState.rice > target.rice ||
+            weekState.sushi > target.sushi ||
+            weekState.other > otherTarget
+          ) {
+            return false;
+          }
+          const needed =
+            target.rice - weekState.rice +
+            target.sushi - weekState.sushi +
+            otherTarget - weekState.other;
+          return needed <= remaining;
+        }
+
+        function verifyTargets(weekStates, targets) {
+          for (const [key, target] of targets) {
+            if (!target.full) continue;
+            const weekState = weekStates.get(key) || emptyWeekState();
+            if (weekState.rice !== target.rice || weekState.sushi !== target.sushi) return false;
+          }
+          return true;
+        }
+
+        function solveWithPhase(days, dishes, phase) {
+          const targets = weekTargets(days, phase);
+          const weekStates = new Map();
+          const usage = new Map();
+          let nodes = 0;
+
+          function visit(index, previousProteins) {
+            nodes += 1;
+            if (nodes > 750000) return false;
+            if (index === days.length) return verifyTargets(weekStates, targets);
+            const day = days[index];
+            if (day.closed) return visit(index + 1, []);
+
+            const weekState = weekStates.get(day.weekKey) || emptyWeekState();
+            weekStates.set(day.weekKey, weekState);
+            const target = targets.get(day.weekKey);
+            const remaining = countRemainingActive(days, index, day.weekKey);
+
+            const candidates = shuffle(
+              dishes.filter((dish) => {
+                if (!dish.availability.includes(day.weekday)) return false;
+                if (overlaps(dish.proteins, previousProteins)) return false;
+                if (dish.proteins.some((protein) => (weekState.proteins[protein] || 0) >= 2)) return false;
+                if (target.full) {
+                  if (dish.baseCategory === 'rice' && weekState.rice >= target.rice) return false;
+                  if (dish.baseCategory === 'sushi' && weekState.sushi >= target.sushi) return false;
+                  const otherTarget = 5 - target.rice - target.sushi;
+                  if (dish.baseCategory === 'other' && weekState.other >= otherTarget) return false;
+                }
+                return true;
+              }),
+            ).sort((left, right) => (usage.get(left.id) || 0) - (usage.get(right.id) || 0));
+
+            for (const dish of candidates) {
+              day.dish = dish;
+              weekState[dish.baseCategory] += 1;
+              dish.proteins.forEach((protein) => {
+                weekState.proteins[protein] = (weekState.proteins[protein] || 0) + 1;
+              });
+              usage.set(dish.id, (usage.get(dish.id) || 0) + 1);
+
+              if (targetStillPossible(weekState, target, remaining) && visit(index + 1, dish.proteins)) {
+                return true;
+              }
+
+              usage.set(dish.id, (usage.get(dish.id) || 1) - 1);
+              dish.proteins.forEach((protein) => {
+                weekState.proteins[protein] -= 1;
+              });
+              weekState[dish.baseCategory] -= 1;
+              day.dish = null;
+            }
+            return false;
+          }
+
+          return visit(0, []) ? days : null;
+        }
+
+        function generatePlan(month, dishes) {
+          const missingWeekday = [1, 2, 3, 4, 5].find(
+            (weekday) => !dishes.some((dish) => dish.availability.includes(weekday)),
+          );
+          if (missingWeekday) {
+            return { ok: false, message: `No dishes are available on ${DAY_LABELS[missingWeekday - 1]}.` };
+          }
+
+          for (const phase of shuffle([0, 1])) {
+            const solved = solveWithPhase(buildMonthDays(month), dishes, phase);
+            if (solved) return { ok: true, days: solved };
+          }
+          return {
+            ok: false,
+            message:
+              'No complete schedule satisfies every rule. Check the CSV’s weekday availability and its protein, rice, sushi, and other-base balance.',
+          };
+        }
+
+        function validatePlan(days) {
+          const errors = [];
+          const weekKeys = [...new Set(days.map((day) => day.weekKey))];
+          let previous = null;
+          days.forEach((day) => {
+            if (day.closed) {
+              previous = null;
+              return;
+            }
+            if (!day.dish) {
+              errors.push(`${day.key} has no meal.`);
+              return;
+            }
+            if (!day.dish.availability.includes(day.weekday)) {
+              errors.push(`${day.dish.name} is not available on ${day.key}.`);
+            }
+            if (previous && overlaps(previous.dish.proteins, day.dish.proteins)) {
+              errors.push(`${previous.key} and ${day.key} share a recognized protein.`);
+            }
+            previous = day;
+          });
+
+          const fullWeekSushi = [];
+          weekKeys.forEach((weekKey) => {
+            const week = days.filter((day) => day.weekKey === weekKey);
+            const active = week.filter((day) => !day.closed);
+            const proteinCounts = {};
+            active.forEach((day) => {
+              (day.dish?.proteins || []).forEach((protein) => {
+                proteinCounts[protein] = (proteinCounts[protein] || 0) + 1;
+              });
+            });
+            Object.entries(proteinCounts).forEach(([protein, count]) => {
+              if (count > 2) errors.push(`${protein} appears ${count} times in the week of ${weekKey}.`);
+            });
+
+            if (week.length === 5 && active.length === 5) {
+              const sushi = active.filter((day) => day.dish?.baseCategory === 'sushi').length;
+              const rice = active.filter((day) => day.dish?.baseCategory === 'rice').length;
+              fullWeekSushi.push(sushi);
+              if (sushi !== 0 && sushi !== 1) errors.push(`The week of ${weekKey} has ${sushi} sushi meals.`);
+              const expectedRice = sushi === 1 ? 3 : 4;
+              if (rice !== expectedRice) {
+                errors.push(`The week of ${weekKey} has ${rice} rice meals; expected ${expectedRice}.`);
+              }
+            }
+          });
+
+          for (let index = 1; index < fullWeekSushi.length; index += 1) {
+            if (fullWeekSushi[index - 1] + fullWeekSushi[index] !== 1) {
+              errors.push('Two consecutive full school weeks do not contain exactly one sushi meal.');
+            }
+          }
+          return errors;
+        }
+
+        function replaceMeal(dateKey) {
+          const index = state.plan.findIndex((day) => day.key === dateKey);
+          if (index < 0 || state.plan[index].closed || !state.plan[index].dish) return false;
+          const currentId = state.plan[index].dish.id;
+          const usage = new Map();
+          state.plan.forEach((day) => {
+            if (day.dish) usage.set(day.dish.id, (usage.get(day.dish.id) || 0) + 1);
+          });
+          const candidates = shuffle(
+            state.dishes.filter(
+              (dish) => dish.id !== currentId && dish.availability.includes(state.plan[index].weekday),
+            ),
+          ).sort((left, right) => (usage.get(left.id) || 0) - (usage.get(right.id) || 0));
+
+          for (const dish of candidates) {
+            const next = state.plan.map((day) => ({ ...day }));
+            next[index].dish = dish;
+            if (validatePlan(next).length === 0) {
+              state.plan = next;
+              return true;
+            }
+          }
+          return false;
+        }
+
+        function removeDay(dateKey) {
+          state.plan = state.plan.map((day) =>
+            day.key === dateKey
+              ? { ...day, dish: null, closed: true, closureSource: 'manual' }
+              : day,
+          );
+        }
+
+        function displayDate(date) {
+          return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(
+            new Date(`${date}T12:00:00`),
+          );
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+        }
+
+        function calendarWeeks(month, days) {
+          const [year, monthNumber] = month.split('-').map(Number);
+          const byDate = new Map(days.map((day) => [day.key, day]));
+          const lastDay = new Date(year, monthNumber, 0).getDate();
+          const weeks = new Map();
+          for (let dayNumber = 1; dayNumber <= lastDay; dayNumber += 1) {
+            const date = new Date(year, monthNumber - 1, dayNumber);
+            if (date.getDay() < 1 || date.getDay() > 5) continue;
+            const key = localDateKey(date);
+            const weekKey = mondayKey(date);
+            if (!weeks.has(weekKey)) weeks.set(weekKey, Array(5).fill(null));
+            weeks.get(weekKey)[date.getDay() - 1] = byDate.get(key) || {
+              key,
+              date: key,
+              weekday: date.getDay(),
+              weekKey,
+              dish: null,
+              closed: false,
+            };
+          }
+          return [...weeks.values()];
+        }
+
+        function dayMarkup(day, dayIndex) {
+          if (!day) return '<article class="day empty"><span class="visually-hidden">Outside selected month</span></article>';
+          const number = Number(day.date.slice(-2));
+          let content = '<p class="waiting">Waiting for menu</p>';
+
+          if (day.closed) {
+            content = '<div class="closed"><strong>No school</strong><p>Removed manually</p></div>';
+          } else if (day.dish) {
+            const dish = day.dish;
+            const large = dish.largePrice ? ` · Large ${escapeHtml(dish.largePrice)}` : '';
+            content = `
+              <div class="meal">
+                <h3>${escapeHtml(dish.name)}</h3>
+                <p class="meta">${escapeHtml(dish.restaurant)}</p>
+                <p class="meta price">${escapeHtml(dish.regularPrice)}${large}</p>
+                <p class="meta">${escapeHtml(dish.proteinRaw || 'Other')} · ${escapeHtml(dish.baseRaw)}</p>
+                <div class="actions">
+                  <button type="button" data-action="regenerate" data-date="${day.key}">Regenerate</button>
+                  <button type="button" data-action="remove" data-date="${day.key}">Remove</button>
+                </div>
+              </div>`;
+          }
+
+          return `
+            <article class="day">
+              <div class="day-top">
+                <time datetime="${day.date}">${number}</time>
+                <span class="mobile-weekday">${DAY_LABELS[dayIndex]}</span>
+              </div>
+              ${content}
+            </article>`;
+        }
+
+        function renderCalendar() {
+          const option = state.monthOptions.find((month) => month.value === state.selectedMonth);
+          calendarMonth.textContent = option?.label || '';
+          const visibleDays = state.plan.length ? state.plan : buildMonthDays(state.selectedMonth);
+          const weeks = calendarWeeks(state.selectedMonth, visibleDays);
+          calendar.innerHTML = `
+            <div class="weekday-headings">
+              ${DAY_LABELS.map((day) => `<div class="weekday-heading">${day}</div>`).join('')}
+            </div>
+            ${weeks
+              .map(
+                (week) => `<div class="week">${week.map((day, index) => dayMarkup(day, index)).join('')}</div>`,
+              )
+              .join('')}`;
+        }
+
+        function registerWebMcp() {
+          if (!document.modelContext?.registerTool) return;
+          const lifecycle = new AbortController();
+          const register = (tool) => {
+            try {
+              Promise.resolve(document.modelContext.registerTool(tool, { signal: lifecycle.signal })).catch(() => {});
+            } catch {}
+          };
+          register({
+            name: 'get_lunch_plan',
+            title: 'Read lunch plan',
+            description: 'Read the lunch plan currently displayed in this local file.',
+            inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+            annotations: { readOnlyHint: true, untrustedContentHint: true },
+            execute: () => ({
+              month: state.selectedMonth,
+              meals: state.plan
+                .filter((day) => day.dish)
+                .map((day) => ({ date: day.key, dish: day.dish.name, restaurant: day.dish.restaurant })),
+              noSchoolDates: state.plan.filter((day) => day.closed).map((day) => day.key),
+            }),
+          });
+          register({
+            name: 'set_planning_month',
+            title: 'Set planning month',
+            description: 'Choose which available month this local planner should display.',
+            inputSchema: {
+              type: 'object',
+              properties: { month: { type: 'string', pattern: '^\\d{4}-\\d{2}$' } },
+              required: ['month'],
+              additionalProperties: false,
+            },
+            annotations: { readOnlyHint: false, untrustedContentHint: false },
+            execute: ({ month }) => {
+              if (!state.monthOptions.some((option) => option.value === month)) {
+                throw new Error('Choose one of the months currently offered by the planner.');
+              }
+              state.selectedMonth = month;
+              state.plan = [];
+              monthSelect.value = month;
+              setStatus(state.dishes.length ? 'Month changed. Generate a new menu.' : 'Upload a CSV to begin.');
+              renderCalendar();
+              return { month };
+            },
+          });
+        }
+
+        state.monthOptions = makeMonthOptions();
+        state.selectedMonth = state.monthOptions[0].value;
+        monthSelect.innerHTML = state.monthOptions
+          .map((month) => `<option value="${month.value}">${month.label}</option>`)
+          .join('');
+
+        csvInput.addEventListener('change', async () => {
+          const file = csvInput.files?.[0];
+          state.plan = [];
+          if (!file) {
+            state.dishes = [];
+            fileName.textContent = '';
+            generateButton.disabled = true;
+            setStatus('Upload a CSV to begin.');
+            renderCalendar();
+            return;
+          }
+
+          fileName.textContent = file.name;
+          try {
+            state.dishes = parseMenuCsv(await file.text());
+            generateButton.disabled = false;
+            setStatus(`${state.dishes.length} dishes loaded. Choose a month and generate the menu.`);
+          } catch (error) {
+            state.dishes = [];
+            generateButton.disabled = true;
+            setStatus(error instanceof Error ? error.message : 'The CSV could not be read.', true);
+          }
+          renderCalendar();
+        });
+
+        monthSelect.addEventListener('change', () => {
+          state.selectedMonth = monthSelect.value;
+          state.plan = [];
+          setStatus(state.dishes.length ? 'Month changed. Generate a new menu.' : 'Upload a CSV to begin.');
+          renderCalendar();
+        });
+
+        generateButton.addEventListener('click', () => {
+          const result = generatePlan(state.selectedMonth, state.dishes);
+          if (!result.ok) {
+            state.plan = [];
+            setStatus(result.message, true);
+          } else {
+            state.plan = result.days;
+            setStatus(`${state.plan.filter((day) => !day.closed).length} school lunches planned.`);
+          }
+          renderCalendar();
+        });
+
+        calendar.addEventListener('click', (event) => {
+          const button = event.target.closest('button[data-action]');
+          if (!button) return;
+          const date = button.dataset.date;
+          if (button.dataset.action === 'remove') {
+            removeDay(date);
+            setStatus(`${displayDate(date)} marked as no school.`);
+          } else if (replaceMeal(date)) {
+            setStatus(`${displayDate(date)} was regenerated.`);
+          } else {
+            setStatus(`No valid replacement for ${displayDate(date)}.`, true);
+          }
+          renderCalendar();
+        });
+
+        renderCalendar();
+        registerWebMcp();
+      })();
+    </script>
+  </body>
+</html>
